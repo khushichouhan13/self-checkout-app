@@ -200,7 +200,7 @@ const Cart = () => {
 
   return (
     <div style={{ maxWidth: 1000, margin: '0 auto' }}>
-      <h2 style={{ fontSize: '1.8rem', marginBottom: 24, display: 'flex', alignItems: 'center', gap: 10 }}>
+      <h2 style={{ fontSize: 'clamp(1.4rem, 5vw, 1.8rem)', marginBottom: 20, display: 'flex', alignItems: 'center', gap: 10 }}>
         <ShoppingBag className="primary-color-text" style={{ color: 'var(--primary)' }} />
         Review Shopping Cart
       </h2>
@@ -218,39 +218,44 @@ const Cart = () => {
           {cartItems.map((item) => (
             <div key={item.product} className="glass-card cart-item-row" style={{ borderRadius: 'var(--radius-md)' }}>
               <img src={item.image} alt={item.name} className="cart-item-img" />
-              
+
               <div className="cart-item-details">
                 <h4>{item.name}</h4>
                 <p>₹{item.price.toFixed(2)}</p>
                 <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Stock: {item.stock} units</span>
               </div>
 
-              <div className="cart-item-quantities">
+              {/* Footer row: visible on mobile as full-width, on tablet handled by CSS grid */}
+              <div className="cart-item-footer">
+                <div className="cart-item-quantities">
+                  <button
+                    onClick={() => handleQtyChange(item.product, item.quantity, -1, item.stock)}
+                    className="qty-btn"
+                    disabled={item.quantity <= 1}
+                    aria-label="Decrease quantity"
+                  >
+                    <Minus size={14} />
+                  </button>
+                  <span className="qty-val">{item.quantity}</span>
+                  <button
+                    onClick={() => handleQtyChange(item.product, item.quantity, 1, item.stock)}
+                    className="qty-btn"
+                    disabled={item.quantity >= item.stock}
+                    aria-label="Increase quantity"
+                  >
+                    <Plus size={14} />
+                  </button>
+                </div>
+
                 <button
-                  onClick={() => handleQtyChange(item.product, item.quantity, -1, item.stock)}
-                  className="qty-btn"
-                  disabled={item.quantity <= 1}
+                  onClick={() => handleRemove(item.product)}
+                  className="btn btn-secondary btn-sm"
+                  style={{ padding: '8px 10px', color: 'var(--danger)', borderColor: 'rgba(239,68,68,0.15)' }}
+                  title="Remove item"
                 >
-                  <Minus size={14} />
-                </button>
-                <span className="qty-val">{item.quantity}</span>
-                <button
-                  onClick={() => handleQtyChange(item.product, item.quantity, 1, item.stock)}
-                  className="qty-btn"
-                  disabled={item.quantity >= item.stock}
-                >
-                  <Plus size={14} />
+                  <Trash2 size={16} />
                 </button>
               </div>
-
-              <button
-                onClick={() => handleRemove(item.product)}
-                className="btn btn-secondary btn-sm"
-                style={{ padding: 8, color: 'var(--danger)', borderColor: 'rgba(239,68,68,0.15)' }}
-                title="Remove item"
-              >
-                <Trash2 size={16} />
-              </button>
             </div>
           ))}
         </div>

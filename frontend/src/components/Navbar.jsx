@@ -1,14 +1,15 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { logout } from '../redux/authSlice.js';
 import { clearCart } from '../redux/cartSlice.js';
-import { ShoppingBag, ScanLine, History, LogOut, ShieldAlert } from 'lucide-react';
+import { ShoppingBag, ScanLine, History, LogOut, ShieldAlert, Menu, X } from 'lucide-react';
 
 const Navbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useDispatch();
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const { userInfo } = useSelector((state) => state.auth);
   const { cartItems } = useSelector((state) => state.cart);
@@ -18,70 +19,132 @@ const Navbar = () => {
   const handleLogout = () => {
     dispatch(logout());
     dispatch(clearCart());
+    setMenuOpen(false);
     navigate('/login');
   };
 
-  if (!userInfo) return null; // Hide navigation bar if user is not authenticated
+  const closeMenu = () => setMenuOpen(false);
+
+  if (!userInfo) return null;
+
+  const navLinks = [
+    { to: '/scanner', icon: <ScanLine size={18} />, label: 'Scan Items' },
+    { to: '/cart',    icon: <ShoppingBag size={18} />, label: 'Cart', badge: cartCount },
+    { to: '/orders',  icon: <History size={18} />, label: 'Invoices' },
+    ...(userInfo.role === 'admin'
+      ? [{ to: '/admin', icon: <ShieldAlert size={18} />, label: 'Admin Panel', warn: true }]
+      : []),
+  ];
 
   return (
     <nav className="navbar">
       <div className="navbar-container">
-        <Link to="/scanner" className="navbar-brand">
-          <ShoppingBag className="primary-color-icon" />
+        {/* Brand */}
+        <Link to="/scanner" className="navbar-brand" onClick={closeMenu}>
+          <ShoppingBag size={22} />
           <span>SmartCart</span>
         </Link>
 
+        {/* Desktop Links */}
         <div className="navbar-links">
-          <Link
-            to="/scanner"
-            className={`nav-link ${location.pathname === '/scanner' ? 'active' : ''}`}
-          >
-            <ScanLine size={18} />
-            <span>Scan Items</span>
-          </Link>
-
-          <Link
-            to="/cart"
-            className={`nav-link cart-icon-wrapper ${
-              location.pathname === '/cart' ? 'active' : ''
-            }`}
-          >
-            <ShoppingBag size={18} />
-            <span>Cart</span>
-            {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
-          </Link>
-
-          <Link
-            to="/orders"
-            className={`nav-link ${location.pathname === '/orders' ? 'active' : ''}`}
-          >
-            <History size={18} />
-            <span>Invoices</span>
-          </Link>
-
-          {userInfo.role === 'admin' && (
+          {navLinks.map(({ to, icon, label, badge, warn }) => (
             <Link
-              to="/admin"
-              className={`nav-link ${location.pathname === '/admin' ? 'active' : ''}`}
-              style={{ color: 'var(--warning)' }}
+              key={to}
+              to={to}
+              className={`nav-link cart-icon-wrapper ${location.pathname === to ? 'active' : ''}`}
+              style={warn ? { color: 'var(--warning)' } : {}}
             >
-              <ShieldAlert size={18} />
-              <span>Admin Panel</span>
+              {icon}
+              <span>{label}</span>
+              {badge > 0 && <span className="cart-badge">{badge}</span>}
             </Link>
-          )}
+          ))}
 
           <div className="user-badge">
             <div className="avatar-circle">
               {userInfo.name.charAt(0).toUpperCase()}
             </div>
-            <span style={{ fontSize: '0.85rem', fontWeight: 600 }}>{userInfo.name.split(' ')[0]}</span>
+            <span style={{ fontSize: '0.85rem', fontWeight: 600 }}>
+              {userInfo.name.split(' ')[0]}
+            </span>
           </div>
 
-          <button onClick={handleLogout} className="nav-link" style={{ cursor: 'pointer', border: 'none', background: 'none' }} title="Logout">
+          <button
+            onClick={handleLogout}
+            className="nav-link"
+            style={{ cursor: 'pointer', border: 'none', background: 'none' }}
+            title="Logout"
+          >
             <LogOut size={18} />
           </button>
         </div>
+
+        {/* Hamburger (Mobile) */}
+        <button
+          className={`navbar-hamburger ${menuOpen ? 'open' : ''}`}
+          onClick={() => setMenuOpen(!menuOpen)}
+          aria-label="Toggle navigation menu"
+          aria-expanded={menuOpen}
+        >
+          <span className="hamburger-line" />
+          <span className="hamburger-line" />
+          <span className="hamburger-line" />
+        </button>
       </div>
+
+      {/* Mobile Drawer */}
+      {menuOpen && (
+        <div className="navbar-drawer open">
+          {/* User info row */}
+          <div style={{
+            display: 'flex', alignItems: 'center', gap: 10,
+            padding: '8px 14px 12px',
+            borderBottom: '1px solid var(--border-glass)',
+            marginBottom: 4,
+          }}>
+            <div className="avatar-circle" style={{ width: 34, height: 34, fontSize: '0.9rem' }}>
+              {userInfo.name.charAt(0).toUpperCase()}
+            </div>
+            <div>
+              <div style={{ fontWeight: 600, fontSize: '0.95rem', color: 'white' }}>{userInfo.name}</div>
+              <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{userInfo.email}</div>
+            </div>
+          </div>
+
+          {/* Nav links */}
+          {navLinks.map(({ to, icon, label, badge, warn }) => (
+            <Link
+              key={to}
+              to={to}
+              onClick={closeMenu}
+              className={`nav-link drawer-nav-link cart-icon-wrapper ${location.pathname === to ? 'active' : ''}`}
+              style={warn ? { color: 'var(--warning)' } : {}}
+            >
+              {icon}
+              <span style={{ flexGrow: 1 }}>{label}</span>
+              {badge > 0 && (
+                <span style={{
+                  background: 'var(--accent)', color: 'white',
+                  borderRadius: 'var(--radius-full)', padding: '1px 8px',
+                  fontSize: '0.75rem', fontWeight: 700,
+                }}>
+                  {badge}
+                </span>
+              )}
+            </Link>
+          ))}
+
+          {/* Logout */}
+          <button
+            onClick={handleLogout}
+            className="nav-link drawer-nav-link"
+            style={{ cursor: 'pointer', border: 'none', background: 'none', color: 'var(--danger)', width: '100%', textAlign: 'left' }}
+          >
+            <LogOut size={18} />
+            <span>Sign Out</span>
+          </button>
+        </div>
+      )}
     </nav>
   );
 };

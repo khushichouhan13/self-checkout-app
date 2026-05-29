@@ -64,18 +64,16 @@ const Invoice = () => {
 
   return (
     <div style={{ maxWidth: 700, margin: '0 auto', paddingBottom: 40 }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }} className="no-print">
+      <div className="invoice-action-row no-print">
         <button onClick={() => navigate('/orders')} className="btn btn-secondary btn-sm" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
           <ArrowLeft size={16} />
           <span>My Invoices</span>
         </button>
-        
-        <div style={{ display: 'flex', gap: 10 }}>
-          <button onClick={handlePrint} className="btn btn-primary btn-sm" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-            <Printer size={16} />
-            <span>Print / Save PDF</span>
-          </button>
-        </div>
+
+        <button onClick={handlePrint} className="btn btn-primary btn-sm" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+          <Printer size={16} />
+          <span>Print / Save PDF</span>
+        </button>
       </div>
 
       {/* Main Premium Digital Invoice Card */}
@@ -115,28 +113,30 @@ const Invoice = () => {
         </div>
 
         {/* Purchase Items breakdown table */}
-        <table className="invoice-table">
-          <thead>
-            <tr>
-              <th style={{ width: '50%' }}>Scanned Item</th>
-              <th style={{ textAlign: 'center', width: '15%' }}>Qty</th>
-              <th style={{ textAlign: 'right', width: '15%' }}>Unit Price</th>
-              <th style={{ textAlign: 'right', width: '20%' }}>Subtotal</th>
-            </tr>
-          </thead>
-          <tbody>
-            {order.items.map((item, idx) => (
-              <tr key={idx}>
-                <td style={{ color: '#1e293b', fontWeight: 500 }}>{item.name}</td>
-                <td style={{ textAlign: 'center', color: '#475569' }}>{item.quantity}</td>
-                <td style={{ textAlign: 'right', color: '#475569' }}>₹{item.price.toFixed(2)}</td>
-                <td style={{ textAlign: 'right', color: '#0f172a', fontWeight: 600 }}>
-                  ₹{(item.price * item.quantity).toFixed(2)}
-                </td>
+        <div className="invoice-table-wrapper">
+          <table className="invoice-table">
+            <thead>
+              <tr>
+                <th style={{ width: '50%' }}>Scanned Item</th>
+                <th style={{ textAlign: 'center', width: '15%' }}>Qty</th>
+                <th style={{ textAlign: 'right', width: '15%' }}>Unit Price</th>
+                <th style={{ textAlign: 'right', width: '20%' }}>Subtotal</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {order.items.map((item, idx) => (
+                <tr key={idx}>
+                  <td style={{ color: '#1e293b', fontWeight: 500 }}>{item.name}</td>
+                  <td style={{ textAlign: 'center', color: '#475569' }}>{item.quantity}</td>
+                  <td style={{ textAlign: 'right', color: '#475569' }}>₹{item.price.toFixed(2)}</td>
+                  <td style={{ textAlign: 'right', color: '#0f172a', fontWeight: 600 }}>
+                    ₹{(item.price * item.quantity).toFixed(2)}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
 
         {/* Total calculation row */}
         <div className="invoice-total-row">

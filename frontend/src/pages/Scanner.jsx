@@ -271,11 +271,11 @@ const Scanner = () => {
 
       {/* ── Header ── */}
       <div className="scan-title-section">
-        <h2 style={{ fontSize: '2rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10 }}>
-          <Scan size={28} style={{ color: 'var(--primary)' }} />
+        <h2 style={{ fontSize: 'clamp(1.4rem, 5vw, 2rem)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10 }}>
+          <Scan size={26} style={{ color: 'var(--primary)', flexShrink: 0 }} />
           Product Scanner
         </h2>
-        <p style={{ marginTop: 8, color: 'var(--text-secondary)' }}>
+        <p style={{ marginTop: 8, color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
           Point your camera at any barcode or QR label to instantly add it to your cart.
         </p>
       </div>

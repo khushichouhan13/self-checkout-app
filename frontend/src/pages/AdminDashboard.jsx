@@ -223,13 +223,13 @@ const AdminDashboard = () => {
   return (
     <div className="admin-layout">
       {/* Page Title */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <h2 style={{ fontSize: '1.8rem', display: 'flex', alignItems: 'center', gap: 10 }}>
-          <ShieldCheck className="primary-color-text" style={{ color: 'var(--primary)' }} />
+      <div className="admin-page-header">
+        <h2 style={{ fontSize: 'clamp(1.3rem, 5vw, 1.8rem)', display: 'flex', alignItems: 'center', gap: 10 }}>
+          <ShieldCheck className="primary-color-text" style={{ color: 'var(--primary)', flexShrink: 0 }} />
           Store Management Console
         </h2>
-        
-        <button onClick={openCreateModal} className="btn btn-primary btn-sm" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+
+        <button onClick={openCreateModal} className="btn btn-primary btn-sm" style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
           <Plus size={16} />
           <span>Add Product</span>
         </button>
@@ -271,7 +271,7 @@ const AdminDashboard = () => {
       </div>
 
       {/* Main Grid: Products on Left, Transactions on Right */}
-      <div style={{ display: 'grid', gridTemplateColumns: '3fr 2fr', gap: 30 }} className="admin-grid-layout">
+      <div className="admin-grid-layout">
         
         {/* PRODUCTS INVENTORY LIST */}
         <div className="glass-card" style={{ padding: 20 }}>
@@ -426,7 +426,7 @@ const AdminDashboard = () => {
                 />
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: 14 }}>
                 <div className="form-group">
                   <label className="form-label">Price (INR) *</label>
                   <input
@@ -484,7 +484,7 @@ const AdminDashboard = () => {
                 </div>
               )}
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: 14 }}>
                 <div className="form-group">
                   <label className="form-label">Image URL</label>
                   <input

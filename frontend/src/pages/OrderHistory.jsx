@@ -63,8 +63,8 @@ const OrderHistory = () => {
 
   return (
     <div style={{ maxWidth: 800, margin: '0 auto' }}>
-      <h2 style={{ fontSize: '1.8rem', marginBottom: 24, display: 'flex', alignItems: 'center', gap: 10 }}>
-        <History className="primary-color-text" style={{ color: 'var(--primary)' }} />
+      <h2 style={{ fontSize: 'clamp(1.3rem, 5vw, 1.8rem)', marginBottom: 20, display: 'flex', alignItems: 'center', gap: 10 }}>
+        <History className="primary-color-text" style={{ color: 'var(--primary)', flexShrink: 0 }} />
         Your Purchase Invoices
       </h2>
 
@@ -81,35 +81,35 @@ const OrderHistory = () => {
           const totalItemsCount = order.items.reduce((acc, item) => acc + item.quantity, 0);
 
           return (
-            <div key={order._id} className="glass-card history-card hoverable" style={{ padding: '20px 24px' }}>
+            <div key={order._id} className="glass-card history-card hoverable" style={{ padding: '16px 20px' }}>
               <div className="history-info">
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
-                  <FileText size={16} style={{ color: 'var(--primary)' }} />
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6, flexWrap: 'wrap' }}>
+                  <FileText size={16} style={{ color: 'var(--primary)', flexShrink: 0 }} />
                   <span style={{ fontWeight: 600, color: 'white' }}>Invoice #{order._id.toString().substring(14).toUpperCase()}</span>
                   <span style={{ padding: '2px 8px', background: 'rgba(16, 185, 129, 0.08)', color: 'var(--success)', border: '1px solid rgba(16, 185, 129, 0.15)', borderRadius: 'var(--radius-sm)', fontSize: '0.75rem', fontWeight: 600 }}>Paid</span>
                 </div>
-                
-                <p style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: '0.85rem' }}>
-                  <Calendar size={14} style={{ color: 'var(--text-muted)' }} />
+
+                <p style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: '0.82rem', flexWrap: 'wrap' }}>
+                  <Calendar size={14} style={{ color: 'var(--text-muted)', flexShrink: 0 }} />
                   <span>{formattedDate}</span>
                   <span style={{ color: 'var(--text-muted)' }}>•</span>
                   <span>{totalItemsCount} {totalItemsCount === 1 ? 'item' : 'items'}</span>
                 </p>
 
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 10 }}>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 10 }}>
                   {order.items.map((item, idx) => (
-                    <span key={idx} style={{ background: 'rgba(255, 255, 255, 0.03)', border: '1px solid var(--border-glass)', padding: '2px 8px', borderRadius: 4, fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
+                    <span key={idx} style={{ background: 'rgba(255, 255, 255, 0.03)', border: '1px solid var(--border-glass)', padding: '2px 8px', borderRadius: 4, fontSize: '0.72rem', color: 'var(--text-secondary)' }}>
                       {item.name} (x{item.quantity})
                     </span>
                   ))}
                 </div>
               </div>
 
-              <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
-                <span style={{ fontFamily: 'var(--font-display)', fontSize: '1.25rem', fontWeight: 700, color: 'white' }}>
+              <div className="history-card-footer">
+                <span style={{ fontFamily: 'var(--font-display)', fontSize: '1.2rem', fontWeight: 700, color: 'white' }}>
                   ₹{order.totalAmount.toFixed(2)}
                 </span>
-                
+
                 <button
                   onClick={() => navigate(`/invoice/${order._id}`)}
                   className="btn btn-secondary btn-sm"
