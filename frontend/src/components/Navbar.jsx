@@ -3,7 +3,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { logout } from '../redux/authSlice.js';
 import { clearCart } from '../redux/cartSlice.js';
-import { ShoppingBag, ScanLine, History, LogOut, ShieldAlert, Menu, X } from 'lucide-react';
+import { ShoppingBag, ScanLine, History, LogOut, ShieldAlert, ShoppingCart } from 'lucide-react';
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -27,10 +27,20 @@ const Navbar = () => {
 
   if (!userInfo) return null;
 
-  const navLinks = [
+  // Links shown in hamburger drawer (Cart is excluded — it lives in the header)
+  const drawerLinks = [
     { to: '/scanner', icon: <ScanLine size={18} />, label: 'Scan Items' },
+    { to: '/orders',  icon: <History size={18} />,  label: 'Invoices' },
+    ...(userInfo.role === 'admin'
+      ? [{ to: '/admin', icon: <ShieldAlert size={18} />, label: 'Admin Panel', warn: true }]
+      : []),
+  ];
+
+  // Links shown in the desktop horizontal nav bar (includes Cart)
+  const desktopLinks = [
+    { to: '/scanner', icon: <ScanLine size={18} />,    label: 'Scan Items' },
     { to: '/cart',    icon: <ShoppingBag size={18} />, label: 'Cart', badge: cartCount },
-    { to: '/orders',  icon: <History size={18} />, label: 'Invoices' },
+    { to: '/orders',  icon: <History size={18} />,     label: 'Invoices' },
     ...(userInfo.role === 'admin'
       ? [{ to: '/admin', icon: <ShieldAlert size={18} />, label: 'Admin Panel', warn: true }]
       : []),
@@ -39,15 +49,16 @@ const Navbar = () => {
   return (
     <nav className="navbar">
       <div className="navbar-container">
+
         {/* Brand */}
         <Link to="/scanner" className="navbar-brand" onClick={closeMenu}>
           <ShoppingBag size={22} />
           <span>SmartCart</span>
         </Link>
 
-        {/* Desktop Links */}
+        {/* Desktop Links (hidden on mobile) */}
         <div className="navbar-links">
-          {navLinks.map(({ to, icon, label, badge, warn }) => (
+          {desktopLinks.map(({ to, icon, label, badge, warn }) => (
             <Link
               key={to}
               to={to}
@@ -79,22 +90,38 @@ const Navbar = () => {
           </button>
         </div>
 
-        {/* Hamburger (Mobile) */}
-        <button
-          className={`navbar-hamburger ${menuOpen ? 'open' : ''}`}
-          onClick={() => setMenuOpen(!menuOpen)}
-          aria-label="Toggle navigation menu"
-          aria-expanded={menuOpen}
-        >
-          <span className="hamburger-line" />
-          <span className="hamburger-line" />
-          <span className="hamburger-line" />
-        </button>
+        {/* Mobile Right Controls: Cart icon + Hamburger */}
+        <div className="navbar-mobile-controls">
+
+          {/* Cart icon — always visible in header on mobile */}
+          <Link
+            to="/cart"
+            onClick={closeMenu}
+            className={`navbar-cart-btn cart-icon-wrapper ${location.pathname === '/cart' ? 'active' : ''}`}
+            aria-label="Open cart"
+          >
+            <ShoppingCart size={20} />
+            {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
+          </Link>
+
+          {/* Hamburger toggle */}
+          <button
+            className={`navbar-hamburger ${menuOpen ? 'open' : ''}`}
+            onClick={() => setMenuOpen(!menuOpen)}
+            aria-label="Toggle navigation menu"
+            aria-expanded={menuOpen}
+          >
+            <span className="hamburger-line" />
+            <span className="hamburger-line" />
+            <span className="hamburger-line" />
+          </button>
+        </div>
       </div>
 
       {/* Mobile Drawer */}
       {menuOpen && (
         <div className="navbar-drawer open">
+
           {/* User info row */}
           <div style={{
             display: 'flex', alignItems: 'center', gap: 10,
@@ -111,26 +138,17 @@ const Navbar = () => {
             </div>
           </div>
 
-          {/* Nav links */}
-          {navLinks.map(({ to, icon, label, badge, warn }) => (
+          {/* Nav links (no Cart — already in header) */}
+          {drawerLinks.map(({ to, icon, label, warn }) => (
             <Link
               key={to}
               to={to}
               onClick={closeMenu}
-              className={`nav-link drawer-nav-link cart-icon-wrapper ${location.pathname === to ? 'active' : ''}`}
+              className={`nav-link drawer-nav-link ${location.pathname === to ? 'active' : ''}`}
               style={warn ? { color: 'var(--warning)' } : {}}
             >
               {icon}
               <span style={{ flexGrow: 1 }}>{label}</span>
-              {badge > 0 && (
-                <span style={{
-                  background: 'var(--accent)', color: 'white',
-                  borderRadius: 'var(--radius-full)', padding: '1px 8px',
-                  fontSize: '0.75rem', fontWeight: 700,
-                }}>
-                  {badge}
-                </span>
-              )}
             </Link>
           ))}
 
